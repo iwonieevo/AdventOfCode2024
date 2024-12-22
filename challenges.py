@@ -138,7 +138,55 @@ def day_5() -> (int, int):
 
 
 def day_6() -> (int, int):
-    return 0, 0
+    print("Paste your input here (end input with an empty line):")
+    input_lines = [list(line) for line in get_input()]
+
+    columns_count = len(input_lines[0])
+    rows_count = len(input_lines)
+    directions = {
+        '^': (-1, 0),
+        '>': (0, 1),
+        'v': (1, 0),
+        '<': (0, -1)
+    }
+    marker = '^'
+    joined = ''.join([''.join(line) for line in input_lines])
+    starting = (joined.index(marker)//columns_count, joined.index(marker)%columns_count)
+
+    current_y, current_x = starting
+    next_y, next_x = current_y + directions[marker][0], current_x + directions[marker][1]
+    visited_positions = set()
+    while (0 <= next_y < rows_count) and (0 <= next_x < columns_count):
+        if input_lines[next_y][next_x] == '#':
+            marker = list(directions.keys())[(list(directions.keys()).index(marker)+1)%4]
+            next_y, next_x = current_y + directions[marker][0], current_x + directions[marker][1]
+        else:
+            visited_positions.add((current_y, current_x))
+            current_y, current_x, next_y, next_x = next_y, next_x, next_y + directions[marker][0], next_x + directions[marker][1]
+    visited_positions.add((current_y, current_x))
+    positions_counter = len(visited_positions)
+
+    possible_obstacles_counter = 0
+    visited_positions.remove(starting)
+    for position in visited_positions:
+        temp_visited = set()
+        input_lines[position[0]][position[1]] = '#'
+        marker = '^'
+        current_y, current_x = starting
+        next_y, next_x = current_y + directions[marker][0], current_x + directions[marker][1]
+        while (0 <= next_y < rows_count) and (0 <= next_x < columns_count):
+            if input_lines[next_y][next_x] == '#':
+                marker = list(directions.keys())[(list(directions.keys()).index(marker) + 1) % 4]
+                next_y, next_x = current_y + directions[marker][0], current_x + directions[marker][1]
+            else:
+                if (current_y, current_x, marker) in temp_visited:
+                    possible_obstacles_counter += 1
+                    break
+                temp_visited.add((current_y, current_x, marker))
+                current_y, current_x, next_y, next_x = next_y, next_x, next_y + directions[marker][0], next_x + directions[marker][1]
+        input_lines[position[0]][position[1]] = '.'
+
+    return positions_counter, possible_obstacles_counter
 
 
 def day_7() -> (int, int):
