@@ -12,10 +12,9 @@ if __name__ == '__main__':
     print("Paste your input here (end input with empty line):")
     while True:
         t = input()
-        if t != '':
-            reports.append([int(x) for x in t.split(' ')])
-        else:
-            break
+        if t == '': break
+
+        reports.append([int(x) for x in t.split(' ')])
 
     print(f"Part one: {len([report for report in reports
           if (report == sorted(report) or report == sorted(report, reverse=True))
