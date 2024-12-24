@@ -1,4 +1,5 @@
 import re
+import itertools
 
 
 def get_input() -> list:
@@ -190,7 +191,39 @@ def day_6() -> (int, int):
 
 
 def day_7() -> (int, int):
-    return 0, 0
+    print("Paste your input here (end input with an empty line):")
+    input_lines = [line.replace(':','').split(' ') for line in get_input()]
+    total_calibration_result = 0
+    with_concatenation = 0
+    for equation in input_lines:
+        to_eval = None
+        for operators in itertools.product(['+', '*'], repeat=(len(equation)-2)):
+            to_eval = "("*len(operators) + equation[1]
+            for operator, number in zip(operators, equation[2:]):
+                to_eval += f"{operator}{number})"
+            to_eval = eval(to_eval)
+            if to_eval == int(equation[0]):
+                total_calibration_result += to_eval
+                break
+        if not to_eval == int(equation[0]):
+            for operators in [combination for combination in itertools.product(['||', '+', '*'], repeat=(len(equation) - 2)) if '||' in combination]:
+                to_eval = equation[1]
+                for operator, number in zip(operators, equation[2:]):
+                    match operator:
+                        case '+':
+                            to_eval = str(int(to_eval) + int(number))
+                        case '*':
+                            to_eval = str(int(to_eval) * int(number))
+                        case '||':
+                            to_eval += number
+                        case _:
+                            raise SyntaxError
+
+                if to_eval == equation[0]:
+                    with_concatenation += int(to_eval)
+                    break
+
+    return total_calibration_result, (total_calibration_result+with_concatenation)
 
 
 def day_8() -> (int, int):

@@ -1,4 +1,5 @@
 from challenges import *
+from time import time
 
 
 if __name__ == '__main__':
@@ -33,6 +34,8 @@ if __name__ == '__main__':
     if func is None:
         print(f"Incorrect input! Possible options are: {', '.join(list(funcs.keys()))}")
     else:
+        s = time()
         answers = func()
         print(f"Part one: {answers[0]}")
         print(f"Part two: {answers[1]}")
+        print(f"Executing time: {time()-s}")
