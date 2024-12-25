@@ -227,7 +227,33 @@ def day_7() -> (int, int):
 
 
 def day_8() -> (int, int):
-    return 0, 0
+    print("Paste your input here (end input with an empty line):")
+    input_lines = get_input()
+    col_c = len(input_lines[0])
+    row_c = len(input_lines)
+    frequencies = set(''.join(input_lines))
+    frequencies.remove('.')
+    antinodes_p1 = set()
+    antinodes_p2 = set()
+    for frequency in frequencies:
+        for a1, a2 in itertools.combinations(re.finditer(frequency, ''.join(input_lines)), 2):
+            a1_x, a1_y, a2_x, a2_y = a1.start() % col_c, a1.start() // col_c, a2.start() % col_c, a2.start() // col_c
+            x_dist, y_dist = a2_x - a1_x, a2_y - a1_y
+            if (0 <= a1_x - x_dist < col_c) and (0 <= a1_y - y_dist < row_c):
+                antinodes_p1.add((a1_x - x_dist, a1_y - y_dist))
+            if (0 <= a2_x + x_dist < col_c) and (0 <= a2_y + y_dist < row_c):
+                antinodes_p1.add((a2_x + x_dist, a2_y + y_dist))
+            t_x, t_y = a1_x, a1_y
+            while (0 <= t_x < col_c) and (0 <= t_y < row_c):
+                antinodes_p2.add((t_x, t_y))
+                t_x -= x_dist
+                t_y -= y_dist
+            t_x, t_y = a2_x, a2_y
+            while (0 <= t_x < col_c) and (0 <= t_y < row_c):
+                antinodes_p2.add((t_x, t_y))
+                t_x += x_dist
+                t_y += y_dist
+    return len(antinodes_p1), len(antinodes_p2)
 
 
 def day_9() -> (int, int):
